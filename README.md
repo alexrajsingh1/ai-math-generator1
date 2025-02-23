@@ -41,7 +41,7 @@ AI Math Tutor is an advanced educational platform that leverages **artificial in
 
 ## 🎥 Demo Video 🎬
 
-  <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">
+  <a href="https://youtu.be/sUgHZuU3p0Y" target="_blank">
     <img src="https://github.com/alexrajsingh1/ai-math-generator1/blob/main/demo.png" alt="Demo Video Thumbnail" width="400">
   </a>
 ---
