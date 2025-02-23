@@ -130,7 +130,7 @@ echo "GOOGLE_GEMINI_API_KEY=your_key_here" > .env
 ```sh
 # Clone the repository 🌀
 git clone https://github.com/alexrajsingh1/ai-math-generator1.git
-cd ai-math-generator/backend
+cd ai-math-generator1/backend
 
 # Create and activate a virtual environment 🌍
 python -m venv venv
