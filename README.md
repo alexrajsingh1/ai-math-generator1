@@ -89,9 +89,162 @@ AI Math Tutor is an advanced educational platform that leverages **artificial in
 - **🔄 Similar Question Feature**: Generates **new variations** of questions for additional practice.
 
 ---
+## AI Math Question Generator 🚀
+---
+### 1️⃣ Database Architecture: Firebase 🔥
+We chose Firebase Realtime Database for its powerful real-time capabilities and seamless integration.
+
+#### 🏗 Database Structure
+```json
+{
+  "questions": {
+    "[questionId]": {
+      "question": "string",
+      "answer": "string",
+      "explanation": "string",
+      "similar_question": "string",
+      "topic": "algebra" | "geometry" | "calculus" | "statistics",
+      "difficulty": "easy" | "medium" | "hard",
+      "status": "active" | "inactive"
+    }
+  }
+}
+```
+---
+### 2️⃣ AI Model: Google Gemini Pro 🤖
+We leverage Google's Gemini Pro model for intelligent question generation.
+
+#### 🧠 Model Implementation
+```python
+from typing import Dict
+from enum import Enum
+
+class Topic(Enum):
+    ALGEBRA = "algebra"
+    GEOMETRY = "geometry"
+    CALCULUS = "calculus"
+    STATISTICS = "statistics"
+
+def generate_math_question(topic: str, difficulty: str) -> Dict:
+    """Generates a math question using Gemini AI"""
+    model = initialize_gemini()
+    
+    prompt = {
+        "topic": Topic(topic.lower()),
+        "difficulty": difficulty,
+        "format": {
+            "question": "text",
+            "answer": "solution",
+            "explanation": "steps",
+            "similar_question": "practice"
+        }
+    }
+    
+    response = model.generate_content(
+        str(prompt),
+        temperature=0.7
+    )
+    
+    return {
+        "question": response.question,
+        "answer": response.answer,
+        "explanation": response.explanation,
+        "similar_question": response.similar_question
+    }
+
+```
+---
+### 3️⃣ Question Generation Process 🔄
+#### ❌ When Answer is Wrong:
+- 🖱 User clicks **Submit Answer** button
+- ✅ System validates the answer
+- ❌ If wrong:
+  - ⚡ Frontend triggers `handleWrongAnswer()`
+  - 📡 Calls API endpoint `/api/generate-question`
+  - 🤖 AI generates similar but different question
+  - 🗂 New question stored in Firebase
+  - 🔄 UI updates with new question
+
+#### 📝 Code Implementation:
+```tsx
+interface Question {
+  id: string;
+  question: string;
+  answer: string;
+  topic: string;
+  difficulty: string;
+}
+
+export const useQuestionHandler = () => {
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmitAnswer = async (userAnswer: string): Promise<void> => {
+    setIsLoading(true);
+    
+    // 1. Validate Answer
+    const isCorrect = await api.validateAnswer(userAnswer, currentQuestion.answer);
+
+    if (!isCorrect) {
+      // 2. Generate New Question
+      const newQuestion = await api.generateQuestion({
+        topic: currentQuestion.topic,
+        difficulty: currentQuestion.difficulty
+      });
+      
+      // 3. Store in Firebase
+      await api.storeQuestion(newQuestion);
+      
+      // 4. Update UI
+      setCurrentQuestion(newQuestion);
+    }
+    
+    setIsLoading(false);
+  };
+
+  return { 
+    currentQuestion, 
+    isLoading, 
+    handleSubmitAnswer 
+  };
+};
+```
+---
+#### 🔄 Wrong Answer Flow:
+```mermaid
+graph TD
+    A[❌ User Submits Wrong Answer] -->|🔔 Trigger| B[🔄 Generate Similar Question]
+    B -->|📡 API Call| C[🤖 Gemini AI Processing]
+    C -->|📝 Generate| D[✨ New Question Created]
+    D -->|📂 Store| E[🔥 Firebase Database]
+    E -->|📥 Fetch| F[🔄 Update UI]
+    F -->|📺 Display| G[📊 Show New Question to User]
+```
+---
+### 4️⃣ Key Features 🌟
+✅ **Real-time** question generation  
+📊 **Adaptive difficulty** based on user performance  
+🔄 **Similar question generation** for wrong answers  
+📈 **Progress tracking & analytics**  
+✏️ **Interactive math workspace** with canvas
+
+---
+## 5️⃣ Simulate Wrong Answer Process 🎮
+A dedicated button on the frontend simulates the wrong answer submission to **trigger AI-based question generation**. This helps test the system's response and ensures smooth integration.
+
+### 🖥️ Implementation:
+
+ <img src="https://github.com/alexrajsingh1/ai-math-generator1/blob/main/demo2.png" alt="Demo Video Thumbnail" width="600">
+
+When clicked, this button **triggers the process** as if the user submitted an incorrect answer, generating a new similar question in Firebase and updating the UI accordingly.
 
 
-### **Prerequisites 📝**
+This ensures smooth functionality and **enhances testing & debugging**! 🚀🔥
+
+
+---
+
+## **Prerequisites 📝**
 
 - 🐍 Python 3.x
 - 💻 Node.js & npm
